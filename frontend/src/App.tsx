@@ -1,5 +1,46 @@
+import { useState } from "react";
+import axios from "axios";
+
 const App: React.FC = () => {
-  return <div>App</div>;
+  const [file, setFile] = useState<File | null>(null);
+  const [result, setResult] = useState<any>(null);
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const selectedFile = e.target.files?.[0];
+
+    if (selectedFile) {
+      setFile(selectedFile);
+      console.log(selectedFile);
+    }
+  }
+
+  async function handleUpload() {
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await axios.post(
+        "https://farmers-profit-hub.onrender.com/model/predict",
+        formData,
+      );
+
+      setResult(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  return (
+    <div>
+      <input type="file" accept="image/*" onChange={handleFileChange} />
+
+      <button onClick={handleUpload}>Predict</button>
+
+      {result && <pre>{JSON.stringify(result, null, 2)}</pre>}
+    </div>
+  );
 };
 
 export default App;
