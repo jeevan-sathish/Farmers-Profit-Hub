@@ -1,0 +1,103 @@
+
+# ==============================
+# ENVIRONMENT VARIABLES / SECRETS
+# ==============================
+.env
+.env.*
+!.env.example
+!.env.sample
+
+# ==============================
+# PYTHON
+# ==============================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Python packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+# Testing / coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+
+# Type checking / linting
+.mypy_cache/
+.pyright/
+.ruff_cache/
+
+# ==============================
+# FASTAPI / BACKEND
+# ==============================
+instance/
+*.sqlite
+*.sqlite3
+*.db
+
+# Logs
+*.log
+logs/
+
+# ==============================
+# NODE / REACT / VITE
+# ==============================
+node_modules/
+dist/
+build/
+.vite/
+*.local
+
+# npm / yarn / pnpm debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ==============================
+# IDE / EDITORS
+# ==============================
+.vscode/
+.idea/
+*.suo
+*.user
+*.code-workspace
+
+# ==============================
+# OPERATING SYSTEM
+# ==============================
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ==============================
+# DOCKER
+# ==============================
+.docker/
+
+# ==============================
+# GENERATED / TEMPORARY FILES
+# ==============================
+tmp/
+temp/
+.cache/
+
+
+# ==============================
+# MACHINE LEARNING DATASETS
+# ==============================
+microservice/modelserver/dataset/
