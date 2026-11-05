@@ -4,6 +4,7 @@ import axios from "axios";
 const App: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
   const [result, setResult] = useState<any>(null);
+  const [loading, setloading] = useState<boolean>(false);
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const selectedFile = e.target.files?.[0];
@@ -17,6 +18,8 @@ const App: React.FC = () => {
   async function handleUpload() {
     if (!file) return;
 
+    setloading(true);
+
     const formData = new FormData();
     formData.append("file", file);
 
@@ -29,6 +32,8 @@ const App: React.FC = () => {
       setResult(response.data);
     } catch (error) {
       console.error(error);
+    } finally {
+      setloading(false);
     }
   }
 
@@ -38,7 +43,11 @@ const App: React.FC = () => {
 
       <button onClick={handleUpload}>Predict</button>
 
-      {result && <pre>{JSON.stringify(result, null, 2)}</pre>}
+      {loading ? (
+        <p>loading please wait...</p>
+      ) : (
+        result && <pre>{JSON.stringify(result, null, 2)}</pre>
+      )}
     </div>
   );
 };
