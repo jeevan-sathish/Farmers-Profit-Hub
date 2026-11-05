@@ -1,17 +1,19 @@
 
 from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
 
 import predict as p
 
 router = APIRouter(prefix="/model", tags=["Model"])
 
+class ImagePath(BaseModel):
+    imagepath:str
 
-@router.get("/predict")
-def predict():
+@router.post("/predict")
+def predict(path:ImagePath):
     try:
-        result = p.predict_model(
-            "dataset/test/good/rotated_by_15_Screen Shot 2018-06-12 at 9.38.10 PM.png"
-        )
+        result = p.predict_model(path.imagepath)
+            
 
     except Exception as e:
         raise HTTPException(
