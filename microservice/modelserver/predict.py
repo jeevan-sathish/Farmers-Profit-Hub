@@ -45,4 +45,3 @@ def predict_model(image_pth):
     }
 
 
-predict_model("dataset/test/bad/rotated_by_15_Screen Shot 2018-06-12 at 8.47.41 PM.png")
