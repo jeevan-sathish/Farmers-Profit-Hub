@@ -1,60 +1,48 @@
-
 import tensorflow as tf
 import numpy as np
 import json
-
 from PIL import Image
 
-# -------------------------------
-# LOAD MODEL
-# -------------------------------
 
-model = tf.keras.models.load_model(
+def predict_model(image_pth):
+    model = tf.keras.models.load_model(
     "models/fruit_freshness_model.keras"
 )
 
-# -------------------------------
-# LOAD CLASS NAMES
-# -------------------------------
+    with open("models/classes.json", "r") as file:
+        class_names = json.load(file)
 
-with open("models/classes.json", "r") as file:
-    class_names = json.load(file)
+    image_path = image_pth 
 
-# -------------------------------
-# LOAD IMAGE
-# -------------------------------
+    image = Image.open(image_path).convert("RGB")
 
-image_path = "dataset/test/bad/rotated_by_15_Screen Shot 2018-06-12 at 8.47.41 PM.png"  # Replace with the actual image path
+    image = image.resize((224, 224))
 
-image = Image.open(image_path).convert("RGB")
+    image_array = np.array(image)
 
-image = image.resize((224, 224))
+    image_array = np.expand_dims(image_array, axis=0)
 
-image_array = np.array(image)
+    predictions = model.predict(image_array)
 
-image_array = np.expand_dims(image_array, axis=0)
+    predicted_index = np.argmax(predictions[0])
 
-# -------------------------------
-# PREDICTION
-# -------------------------------
+    predicted_class = class_names[predicted_index]
 
-predictions = model.predict(image_array)
+    confidence = predictions[0][predicted_index] * 100
 
-predicted_index = np.argmax(predictions[0])
+    condition, fruit = predicted_class.split("_", 1)
 
-predicted_class = class_names[predicted_index]
+    print("--------------------------------")
+    print("Fruit / Vegetable:", fruit)
+    print("Condition:", condition)
+    print("Class:", predicted_class)
+    print("Confidence:", round(float(confidence), 2), "%")
+    print("--------------------------------")
 
-confidence = predictions[0][predicted_index] * 100
+    return {
+        "fruit":fruit,
+        "condition":condition
+    }
 
-# -------------------------------
-# EXTRACT FRUIT AND CONDITION
-# -------------------------------
 
-condition, fruit = predicted_class.split("_", 1)
-
-print("--------------------------------")
-print("Fruit / Vegetable:", fruit)
-print("Condition:", condition)
-print("Class:", predicted_class)
-print("Confidence:", round(float(confidence), 2), "%")
-print("--------------------------------")
+predict_model("dataset/test/bad/rotated_by_15_Screen Shot 2018-06-12 at 8.47.41 PM.png")
