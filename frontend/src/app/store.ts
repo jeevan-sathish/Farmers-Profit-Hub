@@ -1,10 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { messageApi } from "../demo/demoApi";
+import { authSignupApi } from "../features/auth/authSignupApi";
+
 export const Store = configureStore({
   reducer: {
-    [messageApi.reducerPath]: messageApi.reducer,
+    [authSignupApi.reducerPath]: authSignupApi.reducer,
   },
 
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(messageApi.middleware),
+    getDefaultMiddleware().concat(authSignupApi.middleware),
 });

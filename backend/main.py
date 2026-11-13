@@ -20,3 +20,21 @@ def send_message(data: MessageRequest):
     return {
         "response": f"Backend received: {data.message}"
     }
+
+class UserSignUP(BaseModel):
+    name:str
+    email:str
+    password:str
+    role:str
+
+@app.post("/auth/signup")
+def userSignup(data:UserSignUP):
+    return {
+        "id":1,
+        "name":data.name,
+        "email":data.email,
+        "role":data.role,
+        "fph_access_token":"accesstaokenxhgdddhddd",
+        "fph_refresh_token":"refreshtokengggygygyughgygygvjhvhh"
+        
+    }
