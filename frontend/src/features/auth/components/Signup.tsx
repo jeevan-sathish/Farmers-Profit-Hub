@@ -1,5 +1,7 @@
 import React, { useState } from "react";
-import { useUserSignupMutation } from "../authSignupApi";
+import { useUserSignupMutation } from "../authApi";
+import { useDispatch } from "react-redux";
+import { setCredentials } from "../authSlice";
 
 interface UserData {
   name: string;
@@ -17,6 +19,7 @@ const Signup: React.FC = () => {
   });
 
   const [userSignup, { data, isLoading, error }] = useUserSignupMutation();
+  const dispatch = useDispatch();
 
   function handleChange(
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -34,6 +37,18 @@ const Signup: React.FC = () => {
 
     try {
       const result = await userSignup(userdata).unwrap();
+      dispatch(
+        setCredentials({
+          user: {
+            id: result.id,
+            name: result.name,
+            email: result.email,
+            role: result.role,
+          },
+          fph_access_token: result.fph_access_token,
+          fph_refresh_token: result.fph_refresh_token,
+        }),
+      );
 
       console.log("Signup success:", result);
     } catch (err) {

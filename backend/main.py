@@ -38,3 +38,20 @@ def userSignup(data:UserSignUP):
         "fph_refresh_token":"refreshtokengggygygyughgygygvjhvhh"
         
     }
+class UserSignin(BaseModel):
+   
+    email:str
+    password:str
+    
+
+@app.post("/auth/signin")
+def userSignup(data:UserSignin):
+    return {
+        "id":1,
+        "name":"jeevan",
+        "email":data.email,
+        "role":"user",
+        "fph_access_token":"accesstaokenxhgdddhddd",
+        "fph_refresh_token":"refreshtokengggygygyughgygygvjhvhh"
+        
+    }
