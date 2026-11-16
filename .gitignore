@@ -52,7 +52,7 @@ instance/
 # Logs
 *.log
 logs/
-
+backend/credentials.json
 # ==============================
 # NODE / REACT / VITE
 # ==============================
