@@ -52,7 +52,7 @@ instance/
 # Logs
 *.log
 logs/
-backend/credentials.json
+backend/spreadsheetFeature/credentials.json
 # ==============================
 # NODE / REACT / VITE
 # ==============================

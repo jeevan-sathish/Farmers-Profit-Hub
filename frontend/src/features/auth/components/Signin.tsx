@@ -1,34 +1,52 @@
 import React, { useState } from "react";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+
 import { useAppDispatch } from "../../../app/hook";
 import { useUserSigninMutation } from "../authApi";
 import { setCredentials } from "../authSlice";
 
-interface SignInData {
-  email: string;
-  password: string;
-}
+// Validation schema
+const signinSchema = z.object({
+  email: z.string().trim().email("Enter a valid email address"),
+  password: z.string().min(1, "Password is required"),
+});
+
+type SignInData = z.infer<typeof signinSchema>;
 
 const Signin: React.FC = () => {
   const dispatch = useAppDispatch();
 
-  const [userSignin, { data, isLoading, error }] = useUserSigninMutation();
+  const [userSignin, { isLoading }] = useUserSigninMutation();
 
-  const [userdata, setUserdata] = useState<SignInData>({
-    email: "",
-    password: "",
+  const [showPassword, setShowPassword] = useState(false);
+  const [apiError, setApiError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignInData>({
+    resolver: zodResolver(signinSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+    mode: "onBlur",
   });
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const { name, value } = e.target;
+  const inputStyle = (hasError: boolean) =>
+    `w-full rounded-xl border bg-white px-4 py-3 text-gray-900 outline-none transition-all duration-200 placeholder:text-gray-400 focus:ring-4 ${
+      hasError
+        ? "border-red-400 focus:border-red-500 focus:ring-red-100"
+        : "border-gray-200 focus:border-green-500 focus:ring-green-100"
+    }`;
 
-    setUserdata((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  }
-
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+  async function handleSignin(userdata: SignInData) {
+    setApiError("");
+    setSuccess("");
 
     try {
       const result = await userSignin(userdata).unwrap();
@@ -46,43 +64,119 @@ const Signin: React.FC = () => {
         }),
       );
 
+      setSuccess(`Welcome back, ${result.name}!`);
+
       console.log("Signin success:", result);
     } catch (err) {
       console.log("Signin failed:", err);
+      setApiError("Invalid email or password. Please try again.");
     }
   }
 
   return (
-    <div>
-      <h1>Signin</h1>
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-10">
+      <div className="w-full max-w-md rounded-2xl border border-gray-100 bg-white p-8 shadow-xl shadow-gray-200/50">
+        {/* Header */}
+        <div className="mb-8 text-center">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-green-600 text-xl font-bold text-white">
+            F
+          </div>
 
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          placeholder="Email"
-          name="email"
-          value={userdata.email}
-          onChange={handleChange}
-          required
-        />
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+            Welcome back
+          </h1>
 
-        <input
-          type="password"
-          placeholder="Password"
-          name="password"
-          value={userdata.password}
-          onChange={handleChange}
-          required
-        />
+          <p className="mt-2 text-sm text-gray-500">
+            Sign in to your FarmersProfitHub account
+          </p>
+        </div>
 
-        <button type="submit" disabled={isLoading}>
-          {isLoading ? "Signing in..." : "Signin"}
-        </button>
-      </form>
+        {/* API Error */}
+        {apiError && (
+          <div className="mb-5 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">
+            {apiError}
+          </div>
+        )}
 
-      {data && <p>Welcome {data.name}!</p>}
+        {/* Success */}
+        {success && (
+          <div className="mb-5 rounded-lg bg-green-50 px-4 py-3 text-sm text-green-700">
+            {success}
+          </div>
+        )}
 
-      {error && <p>Signin failed. Check your email and password.</p>}
+        <form onSubmit={handleSubmit(handleSignin)} className="space-y-5">
+          {/* Email */}
+          <div>
+            <label className="mb-2 block text-sm font-medium text-gray-700">
+              Email address
+            </label>
+
+            <input
+              type="email"
+              placeholder="you@example.com"
+              {...register("email")}
+              className={inputStyle(!!errors.email)}
+            />
+
+            {errors.email && (
+              <p className="mt-1 text-xs text-red-500">
+                {errors.email.message}
+              </p>
+            )}
+          </div>
+
+          {/* Password */}
+          <div>
+            <label className="mb-2 block text-sm font-medium text-gray-700">
+              Password
+            </label>
+
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter your password"
+                {...register("password")}
+                className={`${inputStyle(!!errors.password)} pr-16`}
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-green-600 hover:text-green-700"
+              >
+                {showPassword ? "Hide" : "Show"}
+              </button>
+            </div>
+
+            {errors.password && (
+              <p className="mt-1 text-xs text-red-500">
+                {errors.password.message}
+              </p>
+            )}
+          </div>
+
+          {/* Submit */}
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="flex w-full items-center justify-center rounded-xl bg-green-600 px-4 py-3 font-semibold text-white transition-all duration-200 hover:bg-green-700 focus:ring-4 focus:ring-green-100 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {isLoading ? "Signing in..." : "Sign in"}
+          </button>
+        </form>
+
+        {/* Footer */}
+        <p className="mt-6 text-center text-sm text-gray-500">
+          Don't have an account?{" "}
+          <a
+            href="/signup"
+            className="font-semibold text-green-600 hover:text-green-700"
+          >
+            Create account
+          </a>
+        </p>
+      </div>
     </div>
   );
 };
