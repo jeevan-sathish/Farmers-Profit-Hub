@@ -1,7 +1,9 @@
-
+from routes.signin import SigninRouter
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from models.UserModel import User
+from database.db import Base, engine
+
 
 app = FastAPI()
 
@@ -12,46 +14,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-class MessageRequest(BaseModel):
-    message: str
+Base.metadata.create_all(bind=engine)
 
-@app.post("/message")
-def send_message(data: MessageRequest):
-    return {
-        "response": f"Backend received: {data.message}"
-    }
 
-class UserSignUP(BaseModel):
-    name:str
-    email:str
-    password:str
-    role:str
-
-@app.post("/auth/signup")
-def userSignup(data:UserSignUP):
-    return {
-        "id":1,
-        "name":data.name,
-        "email":data.email,
-        "role":data.role,
-        "fph_access_token":"accesstaokenxhgdddhddd",
-        "fph_refresh_token":"refreshtokengggygygyughgygygvjhvhh"
-        
-    }
-class UserSignin(BaseModel):
-   
-    email:str
-    password:str
-    
-
-@app.post("/auth/signin")
-def userSignup(data:UserSignin):
-    return {
-        "id":1,
-        "name":"jeevan",
-        "email":data.email,
-        "role":"user",
-        "fph_access_token":"accesstaokenxhgdddhddd",
-        "fph_refresh_token":"refreshtokengggygygyughgygygvjhvhh"
-        
-    }
+app.include_router(SigninRouter, prefix="/auth")

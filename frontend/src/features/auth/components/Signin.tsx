@@ -7,7 +7,6 @@ import { useAppDispatch } from "../../../app/hook";
 import { useUserSigninMutation } from "../authApi";
 import { setCredentials } from "../authSlice";
 
-// Validation schema
 const signinSchema = z.object({
   email: z.string().trim().email("Enter a valid email address"),
   password: z.string().min(1, "Password is required"),
@@ -76,7 +75,6 @@ const Signin: React.FC = () => {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-10">
       <div className="w-full max-w-md rounded-2xl border border-gray-100 bg-white p-8 shadow-xl shadow-gray-200/50">
-        {/* Header */}
         <div className="mb-8 text-center">
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-green-600 text-xl font-bold text-white">
             F
@@ -91,14 +89,12 @@ const Signin: React.FC = () => {
           </p>
         </div>
 
-        {/* API Error */}
         {apiError && (
           <div className="mb-5 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">
             {apiError}
           </div>
         )}
 
-        {/* Success */}
         {success && (
           <div className="mb-5 rounded-lg bg-green-50 px-4 py-3 text-sm text-green-700">
             {success}
@@ -106,7 +102,6 @@ const Signin: React.FC = () => {
         )}
 
         <form onSubmit={handleSubmit(handleSignin)} className="space-y-5">
-          {/* Email */}
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-700">
               Email address
@@ -126,7 +121,6 @@ const Signin: React.FC = () => {
             )}
           </div>
 
-          {/* Password */}
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-700">
               Password
@@ -156,7 +150,6 @@ const Signin: React.FC = () => {
             )}
           </div>
 
-          {/* Submit */}
           <button
             type="submit"
             disabled={isLoading}
@@ -166,7 +159,6 @@ const Signin: React.FC = () => {
           </button>
         </form>
 
-        {/* Footer */}
         <p className="mt-6 text-center text-sm text-gray-500">
           Don't have an account?{" "}
           <a
